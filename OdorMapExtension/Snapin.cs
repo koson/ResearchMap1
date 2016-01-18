@@ -62,8 +62,21 @@ namespace ResearchMap1.OdorMapExtension
             vertices.Add(new Coordinate(11219035 + 100, 1542354 + 0));
             Polygon geom = new Polygon(vertices);
 
+            fs.AddFeature(geom);
+
+
+
+            vertices.Clear();
+            vertices.Add(new Coordinate(11219035 + 100, 1542354));
+            vertices.Add(new Coordinate(11219035 + 100, 1542354 + 100));
+            vertices.Add(new Coordinate(11219035 + 200, 1542354 + 100));
+            vertices.Add(new Coordinate(11219035 + 200, 1542354 + 0));
+            geom = new Polygon(vertices);
+
+
             // add the geometry to the featureset. 
             IFeature feature = fs.AddFeature(geom);
+
 
             // now the resulting features knows what columns it has
             // add values for the columns
@@ -189,34 +202,17 @@ namespace ResearchMap1.OdorMapExtension
         }
         private void convertCoordinate(object sender, EventArgs e)
         {
-            //interleaved x and y values, so like x1, y1, x2, y2 etc.
-            //double[] xy = new double[] { 456874.625438354, 5145767.7929015327 };
-            //double[] xy = new double[] { 11219354.9522214, 1542364.97063055 };
             double[] xy = new double[] { 100.78518031542525, 13.722204938478965 };
             // z values if any.  Typically this is just 0.
             double[] z = new double[] { 0 };
             // Source projection information.
-            //ProjectionInfo source = DotSpatial.Projections.KnownCoordinateSystems.Projected.UtmWgs1984.WGS1984UTMZone32N;
             ProjectionInfo source = DotSpatial.Projections.KnownCoordinateSystems.Projected.World.WebMercator;
             // Destination projection information.
             ProjectionInfo dest = DotSpatial.Projections.KnownCoordinateSystems.Geographic.World.WGS1984;
-            // Call the projection utility.
-            //DotSpatial.Projections.Reproject.ReprojectPoints(xy, z, source, dest, 0, 1);
-            //DotSpatial.Projections.Reproject.ReprojectPoints(xy, z, source, dest, 0, 1);
 
-            Console.WriteLine("Coordinate (WGS1984) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
+//            Console.WriteLine("Coordinate (WGS1984) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
             DotSpatial.Projections.Reproject.ReprojectPoints(xy, z, dest, source, 0, 1);
-            Console.WriteLine("Coordinate (World.WebMercator) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
-
-
-
-            //var wktstring = "PROJCS[\"WGS_1984_UTM_Zone_47N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000],PARAMETER[\"False_Northing\",0],PARAMETER[\"Central_Meridian\",99],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0],UNIT[\"Meter\",1]]";
-
-            //var latlongwkt = "GEOGCS [\"Longitude / Latitude (NAD 83)\",DATUM [\"NAD 83\",SPHEROID [\"GRS 80\",6378137,298.257222101]],PRIMEM [\"Greenwich\",0.000000],UNIT [\"Decimal Degree\",0.01745329251994330]]";
-
-
-
-
+//            Console.WriteLine("Coordinate (World.WebMercator) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
         }
 
         private void MultilsFSCS(object sender, EventArgs e)
