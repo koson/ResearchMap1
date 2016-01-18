@@ -62,7 +62,6 @@ E:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\Do
 E:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\DotSpatial.Positioning.dll
 E:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\DotSpatial.Positioning.Forms.pdb
 E:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\DotSpatial.Positioning.pdb
-E:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\obj\Debug\DemoPlugin.DemoPluginExtension.AboutBox.resources
 e:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\ResearchMap1.exe.config
 e:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\DotSpatial.Plugins.SetSelectable.dll
 e:\VS2012\DotSpatial\2016\dotspatial-20160115\Research\ResearchMap1\bin\Debug\DotSpatial.Plugins.SetSelectable.pdb

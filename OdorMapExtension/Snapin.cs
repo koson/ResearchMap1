@@ -15,6 +15,7 @@ namespace ResearchMap1.OdorMapExtension
 {
     class Snapin : Extension
     {
+        IFeatureSet _myPoints = new FeatureSet(FeatureType.Point);
         public override void Activate()
         {
             const string MenuKey = "kOdorMap";
@@ -43,6 +44,7 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create multi points", MpsCS));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multilinestring", MlsCS));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multipolygon", MpgCS));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create base grid", createBaseGrid));
 
 
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "generate polygon that contains a hole ", HolesCS));
@@ -54,6 +56,204 @@ namespace ResearchMap1.OdorMapExtension
 
             base.Activate();
         }
+
+        private void createBaseGrid(object sender, EventArgs e)
+        {
+            //Random rnd = new Random();
+            //Polygon[] pg = new Polygon[50];
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    Coordinate center = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+            //    Coordinate[] coord = new Coordinate[36];
+            //    for (int ii = 0; ii < 36; ii++)
+            //    {
+            //        coord[ii] = new Coordinate(center.X + Math.Cos((ii * 10) * Math.PI / 10), center.Y + (ii * 10) * Math.PI / 10);
+            //    }
+            //    coord[35] = new Coordinate(coord[0].X, coord[0].Y);
+            //    pg[i] = new Polygon(coord);
+            //}
+            //MultiPolygon mpg = new MultiPolygon(pg);
+
+            //FeatureSet fs = new FeatureSet(mpg.FeatureType);
+            //fs.Features.Add(mpg);
+            //fs.SaveAs("C:\\Temp\\basegrid.shp", true);
+
+            //-----------------------------------------------------------------------------------
+            //// define the feature type for this file
+            //FeatureSet fs = new FeatureSet(FeatureType.Polygon);
+
+
+            ////// Add Some Columns
+            //fs.DataTable.Columns.Add(new DataColumn("ID", typeof(int)));
+            //fs.DataTable.Columns.Add(new DataColumn("Text", typeof(string)));
+
+            ////// create a geometry (square polygon)
+            //List<Coordinate> vertices = new List<Coordinate>();
+
+            //vertices.Add(new Coordinate(11219035, 1542354));
+            //vertices.Add(new Coordinate(11219035, 1542354 + 100));
+            //vertices.Add(new Coordinate(11219035 + 100, 1542354 + 100));
+            //vertices.Add(new Coordinate(11219035 + 100, 1542354 + 0));
+            //Polygon geom = new Polygon(vertices);
+
+            //fs.AddFeature(geom);
+
+
+
+            //Random rnd = new Random();
+            //Polygon[] pg = new Polygon[50];
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    Coordinate center = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+            //    Coordinate[] coord = new Coordinate[36];
+            //    for (int ii = 0; ii < 36; ii++)
+            //    {
+            //        coord[ii] = new Coordinate(center.X + Math.Cos((ii * 10) * Math.PI / 10), center.Y + (ii * 10) * Math.PI / 10);
+            //    }
+            //    coord[35] = new Coordinate(coord[0].X, coord[0].Y);
+            //    pg[i] = new Polygon(coord);
+            //}
+
+            //Polygon[] pg = new Polygon[2];
+            List<Polygon> pg = new List<Polygon>();
+            Coordinate[] coord = new Coordinate[4];
+            coord[0] = new Coordinate(11219035, 1542354);
+            coord[1] = new Coordinate(11219035, 1542354 + 100);
+            coord[2] = new Coordinate(11219035 + 100, 1542354 + 100);
+            coord[3] = new Coordinate(11219035 + 100, 1542354 + 0);
+            pg.Add( new Polygon(coord));
+
+            coord[0] = new Coordinate(11219035+100, 1542354);
+            coord[1] = new Coordinate(11219035 + 100, 1542354 + 100);
+            coord[2] = new Coordinate(11219035 + 100 + 100, 1542354 + 100);
+            coord[3] = new Coordinate(11219035 + 100 + 100, 1542354 + 0);
+            pg.Add(new Polygon(coord));
+
+            MultiPolygon mpg = new MultiPolygon(pg.ToArray());
+            FeatureSet fs = new FeatureSet(mpg.FeatureType);
+            fs.Features.Add(mpg);
+            // Add a layer to the map, and we know it is a point layer so cast it specifically.
+            IMapPolygonLayer polygonLayer = App.Map.Layers.Add(fs) as IMapPolygonLayer;
+
+            // Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
+            if (polygonLayer != null)
+            {
+                polygonLayer.LegendText = "grid point";
+                //polygonLayer.Symbolizer = new PointSymbolizer(Color.Blue, DotSpatial.Symbology.Po intShape.Ellipse, 7);
+            }
+
+            //// add the geometry to the featureset. 
+            //IFeature feature = fs.AddFeature(geom);
+
+            //// now the resulting features knows what columns it has
+            //// add values for the columns
+            //feature.DataRow.BeginEdit();
+            //feature.DataRow["ID"] = 1;
+            //feature.DataRow["Text"] = "Hello World";
+            //feature.DataRow.EndEdit();
+            //// save the feature set
+            //fs.SaveAs("C:\\Temp\\basegrid.shp", true);
+            //-------------------------------------------------------
+
+
+
+
+            //// Create the featureset if one hasn't been created yet.
+            //if (_myPoints == null) _myPoints = new FeatureSet(FeatureType.Point);
+
+            //// Assume background layers have been added, and get the current map extents.
+
+            //double xmin = App.Map.Extent.MinX;
+            //double xmax = App.Map.Extent.MaxX;
+            //double ymin = App.Map.Extent.MinY;
+            //double ymax = App.Map.Extent.MaxY;
+
+            //// Randomly generate 10 points that are in the map extent
+            //Random rnd = new Random();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    double x = xmin + rnd.NextDouble() * (xmax - xmin);
+            //    double y = ymin + rnd.NextDouble() * (ymax - ymin);
+            //    Coordinate c = new Coordinate(x, y);
+            //    _myPoints.Features.Add(c);
+            //}
+
+            //// Add a layer to the map, and we know it is a point layer so cast it specifically.
+            //IMapPointLayer pointLayer = App.Map.Layers.Add(_myPoints) as IMapPointLayer;
+
+            //// Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
+            //if (pointLayer != null)
+            //{
+            //    pointLayer.LegendText = "MovingPoints";
+            //    pointLayer.Symbolizer = new PointSymbolizer(Color.Blue, DotSpatial.Symbology.PointShape.Ellipse, 7);
+            //}
+
+
+        }
+
+        //http://dotspatial.codeplex.com/wikipage?title=RandomPoints&referringTitle=Desktop_SampleCode
+        private void AddPoints(object sender, EventArgs e)
+        {
+            // Create the featureset if one hasn't been created yet.
+            if (_myPoints == null) _myPoints = new FeatureSet(FeatureType.Point);
+
+            // Assume background layers have been added, and get the current map extents.
+
+            double xmin = App.Map.Extent.MinX;
+            double xmax = App.Map.Extent.MaxX;
+            double ymin = App.Map.Extent.MinY;
+            double ymax = App.Map.Extent.MaxY;
+
+            // Randomly generate 10 points that are in the map extent
+            Random rnd = new Random();
+            for (int i = 0; i < 10; i++)
+            {
+                double x = xmin + rnd.NextDouble() * (xmax - xmin);
+                double y = ymin + rnd.NextDouble() * (ymax - ymin);
+                Coordinate c = new Coordinate(x, y);
+                _myPoints.Features.Add(c);
+            }
+
+            // Add a layer to the map, and we know it is a point layer so cast it specifically.
+            IMapPointLayer pointLayer = App.Map.Layers.Add(_myPoints) as IMapPointLayer;
+
+            // Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
+            if (pointLayer != null)
+            {
+                pointLayer.LegendText = "MovingPoints";
+                pointLayer.Symbolizer = new PointSymbolizer(Color.Blue, DotSpatial.Symbology.PointShape.Ellipse, 7);
+            }
+        }
+        private void MovePoints(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+
+
+            foreach (IFeature feature in _myPoints.Features)
+            {
+                // Coordinates can be updated geographically like
+                // feature.Coordinates[0].X += (rnd.NextDouble() - .5);
+                // feature.Coordinates[0].Y += (rnd.NextDouble() - .5);
+
+                // Or controled in pixels with the help of the map
+                System.Drawing.Point pixelLocation = App.Map.ProjToPixel(feature.Coordinates[0]);
+
+                // Control movement in terms of pixels
+                int dx = Convert.ToInt32((rnd.NextDouble() - .5) * 50); // shift left or right 5 pixels
+                int dy = Convert.ToInt32((rnd.NextDouble() - .5) * 50); // shift up or down 5 pixels
+                pixelLocation.X = pixelLocation.X + dx;
+                pixelLocation.Y = pixelLocation.Y + dy;
+
+                // Convert the pixel motions back to geographic motions.
+                Coordinate c = App.Map.PixelToProj(pixelLocation);
+                feature.Coordinates[0] = c;
+            }
+
+            // Refresh the cached representation because we moved points around.
+            App.Map.MapFrame.Invalidate();
+            App.Map.Invalidate();
+        }
+
 
         private void MpgCS(object sender, EventArgs e)
         {
@@ -380,69 +580,6 @@ namespace ResearchMap1.OdorMapExtension
             fs.SaveAs("C:\\Temp\\Lines.shp", true);
         }
 
-        //http://dotspatial.codeplex.com/wikipage?title=RandomPoints&referringTitle=Desktop_SampleCode
-        IFeatureSet _myPoints = new FeatureSet(FeatureType.Point);
-        private void AddPoints(object sender, EventArgs e)
-        {
-            // Create the featureset if one hasn't been created yet.
-            if (_myPoints == null) _myPoints = new FeatureSet(FeatureType.Point);
-
-            // Assume background layers have been added, and get the current map extents.
-
-            double xmin = App.Map.Extent.MinX;
-            double xmax = App.Map.Extent.MaxX;
-            double ymin = App.Map.Extent.MinY;
-            double ymax = App.Map.Extent.MaxY;
-
-            // Randomly generate 10 points that are in the map extent
-            Random rnd = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                double x = xmin + rnd.NextDouble() * (xmax - xmin);
-                double y = ymin + rnd.NextDouble() * (ymax - ymin);
-                Coordinate c = new Coordinate(x, y);
-                _myPoints.Features.Add(c);
-            }
-
-            // Add a layer to the map, and we know it is a point layer so cast it specifically.
-            IMapPointLayer pointLayer = App.Map.Layers.Add(_myPoints) as IMapPointLayer;
-
-            // Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
-            if (pointLayer != null)
-            {
-                pointLayer.LegendText = "MovingPoints";
-                pointLayer.Symbolizer = new PointSymbolizer(Color.Blue, DotSpatial.Symbology.PointShape.Ellipse, 7);
-            }
-        }
-        private void MovePoints(object sender, EventArgs e)
-        {
-            Random rnd = new Random();
-
-
-            foreach (IFeature feature in _myPoints.Features)
-            {
-                // Coordinates can be updated geographically like
-                // feature.Coordinates[0].X += (rnd.NextDouble() - .5);
-                // feature.Coordinates[0].Y += (rnd.NextDouble() - .5);
-
-                // Or controled in pixels with the help of the map
-                System.Drawing.Point pixelLocation = App.Map.ProjToPixel(feature.Coordinates[0]);
-
-                // Control movement in terms of pixels
-                int dx = Convert.ToInt32((rnd.NextDouble() - .5) * 50); // shift left or right 5 pixels
-                int dy = Convert.ToInt32((rnd.NextDouble() - .5) * 50); // shift up or down 5 pixels
-                pixelLocation.X = pixelLocation.X + dx;
-                pixelLocation.Y = pixelLocation.Y + dy;
-
-                // Convert the pixel motions back to geographic motions.
-                Coordinate c = App.Map.PixelToProj(pixelLocation);
-                feature.Coordinates[0] = c;
-            }
-
-            // Refresh the cached representation because we moved points around.
-            App.Map.MapFrame.Invalidate();
-            App.Map.Invalidate();
-        }
         private void convertCoordinate(object sender, EventArgs e)
         {
             double[] xy = new double[] { 100.78518031542525, 13.722204938478965 };
