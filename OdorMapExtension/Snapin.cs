@@ -27,7 +27,7 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "get ProjectionInfo", getProjectionInfo));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Polygon Feature Set", MultypgFSCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Point Feature Set", MultiptFSCS));
-            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Line Feature Set", MultilsFSCS));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Line Feature Set", MultilsFSCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "test convert coordinate", convertCoordinate));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Add Point", AddPoints));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Move Point", MovePoints));
@@ -36,6 +36,13 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "loop through a Feature Set's attribute table and get all the values", TableCS));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line", DrawLine));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line 2", DrawLine2));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Coord Click", btnCoord_Click));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "calculating the length of line string", linestringCS));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create new polygon and calculating the area", PolygonCS));
+
+            
+
 
             App.HeaderControl.Add(new MenuContainerItem(MenuKey, SubMenuKey, Properties.Settings.Default.odormapSub));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
@@ -43,17 +50,134 @@ namespace ResearchMap1.OdorMapExtension
             base.Activate();
         }
 
+        private void PolygonCS(object sender, EventArgs e)
+        {
+            //creates a new coordinate array
+            Coordinate[] coords = new Coordinate[10];
+            //creates a random point variable
+            Random rnd = new Random();
+            //Creates the center coordiante for the new polygon
+            Coordinate center = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+            //a for loop that generates a new random X and Y value and feeds those values into the coordinate array
+            for (int i = 0; i < 10; i++)
+            {
+                coords[i] = new Coordinate(center.X + Math.Cos((i * 2) * Math.PI / 18), center.Y + (i * 2) * Math.PI / 18);
+            }
+            //creates a new polygon from the coordinate array
+            coords[9] = new Coordinate(coords[0].X, coords[0].Y);
+            Polygon pg = new Polygon(coords);
+            //new variable for the area of the polgyon
+            Double area;
+            area = pg.Area;
+            //displays the area of the polygon
+            MessageBox.Show("The Area of the polygon is: " + area);
+        }
+
+        private void linestringCS(object sender, EventArgs e)
+        {
+            //creates a new coordinate array
+            Coordinate[] coords = new Coordinate[36];
+            //creates a random point variable
+            Random rnd = new Random();
+            //a for loop that generates a new random X and Y value and feeds those values into the coordinate array
+            for (int i = 0; i < 36; i++)
+            {
+                coords[i] = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+            }
+            //creates a new linstring from the array of coordinates
+            LineString ls = new LineString(coords);
+            //new variable for the length of the linstring
+            Double length;
+            length = ls.Length;
+            //Displays the length of the linstring
+            MessageBox.Show("The length of the linstring is: " + length);
+        }
+
+        private void btnCoord_Click(object sender, EventArgs e)
+        {
+            //creates a new coordinate 
+            Coordinate c = new Coordinate(2.4, 2.4);
+            //passes the coordinate to a new point
+            DotSpatial.Topology.Point p = new DotSpatial.Topology.Point(c);
+            //displayes the new point's x and y coordiantes
+            MessageBox.Show("Point p is: x= " + p.X + " & y= " + p.Y);
+        }
+
+        private void DrawLine2(object sender, EventArgs e)
+        {
+ 
+
+        }
+
         IFeatureSet _myLines = new FeatureSet(FeatureType.Line);
         void DrawLine(double x1, double y1, double x2, double y2, int pixelWidth, Color color)
-        { 
+        {
             // TODO write function draw line
-        
+
         }
 
         private void DrawLine(object sender, EventArgs e)
         {
+            double xmin = App.Map.Extent.MinX;
+            double xmax = App.Map.Extent.MaxX;
+            double ymin = App.Map.Extent.MinY;
+            double ymax = App.Map.Extent.MaxY;
+
+            Feature f = new Feature();
+            FeatureSet fs = new FeatureSet(f.FeatureType);
+
+            // TODO change to List<Coordinate>... 
+            Coordinate[] coord = new Coordinate[2];
+            coord[0] = new Coordinate(xmin, ymin);
+            coord[1] = new Coordinate(xmin, ymax);
+            LineString ls = new LineString(coord);
+            f = new Feature(ls);
+            fs.Features.Add(f);
+
+            coord[0] = new Coordinate(xmin / 2, ymin);
+            coord[1] = new Coordinate(xmin / 2, ymax);
+            ls = new LineString(coord);
+            f = new Feature(ls);
+            fs.Features.Add(f);
+
+            coord[0] = new Coordinate(xmin, ymax);
+            coord[1] = new Coordinate(xmax, ymax);
+            ls = new LineString(coord);
+            f = new Feature(ls);
+            fs.Features.Add(f);
+
+            coord[0] = new Coordinate(xmin, ymax / 2);
+            coord[1] = new Coordinate(xmax, ymax / 2);
+            ls = new LineString(coord);
+            f = new Feature(ls);
+            fs.Features.Add(f);
+
+            //App.Map.AddFeatureLayer 
+
+
+            fs.SaveAs("C:\\Temp\\LineTest.shp", true);
         }
- 
+
+        private void MultilsFSCS(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            Feature f = new Feature();
+            FeatureSet fs = new FeatureSet(f.FeatureType);
+            for (int ii = 0; ii < 40; ii++)
+            {
+                Coordinate[] coord = new Coordinate[36];
+                for (int i = 0; i < 36; i++)
+                {
+                    coord[i] = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+                }
+                LineString ls = new LineString(coord);
+                f = new Feature(ls);
+                fs.Features.Add(f);
+            }
+            fs.SaveAs("C:\\Temp\\test.shp", true);
+        }
+
+
         private void CreateAttributes(object sender, EventArgs e)
         {
             //http://dotspatial.codeplex.com/wikipage?title=CreateAttributes&referringTitle=Desktop_SampleCode
@@ -147,6 +271,8 @@ namespace ResearchMap1.OdorMapExtension
             Feature f = new Feature(ls);
             FeatureSet fs = new FeatureSet(f.FeatureType);
             fs.Features.Add(f);
+
+            fs.SaveAs("C:\\Temp\\Lines.shp", true);
         }
 
         //http://dotspatial.codeplex.com/wikipage?title=RandomPoints&referringTitle=Desktop_SampleCode
@@ -227,24 +353,6 @@ namespace ResearchMap1.OdorMapExtension
             //            Console.WriteLine("Coordinate (World.WebMercator) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
         }
 
-        private void MultilsFSCS(object sender, EventArgs e)
-        {
-            Random rnd = new Random();
-            Feature f = new Feature();
-            FeatureSet fs = new FeatureSet(f.FeatureType);
-            for (int ii = 0; ii < 40; ii++)
-            {
-                Coordinate[] coord = new Coordinate[36];
-                for (int i = 0; i < 36; i++)
-                {
-                    coord[i] = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
-                }
-                LineString ls = new LineString(coord);
-                f = new Feature(ls);
-                fs.Features.Add(f);
-            }
-            fs.SaveAs("C:\\Temp\\test.shp", true);
-        }
 
         private void MultiptFSCS(object sender, EventArgs e)
         {
