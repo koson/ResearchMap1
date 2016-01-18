@@ -114,6 +114,8 @@ namespace ResearchMap1.OdorMapExtension
             //    pg[i] = new Polygon(coord);
             //}
 
+
+            // TODO: make a loop for draw grid   
             //Polygon[] pg = new Polygon[2];
             List<Polygon> pg = new List<Polygon>();
             Coordinate[] coord = new Coordinate[4];
