@@ -21,33 +21,138 @@ namespace ResearchMap1.OdorMapExtension
             const string SubMenuKey = "kOdorMapSub1";
 
             App.HeaderControl.Add(new RootItem(MenuKey, Properties.Settings.Default.odormapMenu));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, Properties.Settings.Default.odormapSub1, method1));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, Properties.Settings.Default.odormapSub1, method1));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Reproject a Shapefile", ReprojectShapefile));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Adding a Geographic Coordinate System to a Feature Set", AddingGeographicCoordinateSystemToFeatureSet));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "get ProjectionInfo", getProjectionInfo));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Polygon Feature Set", MultypgFSCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Point Feature Set", MultiptFSCS));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Line Feature Set", MultilsFSCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Multi Line Feature Set", MultilsFSCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "test convert coordinate", convertCoordinate));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Add Point", AddPoints));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Move Point", MovePoints));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "creates a line feature", CreatesLineFeature));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "creates a line feature", CreatesLineFeature));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "get the value of a single cell in an attribute table", TableSingleCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "loop through a Feature Set's attribute table and get all the values", TableCS));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line", DrawLine));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line 2", DrawLine2));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Coord Click", btnCoord_Click));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "calculating the length of line string", linestringCS));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create new polygon and calculating the area", PolygonCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line", DrawLine));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line 2", DrawLine2));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Coord Click", btnCoord_Click));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "calculating the length of line string", linestringCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create new polygon and calculating the area", PolygonCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create multi points", MpsCS));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multilinestring", MlsCS));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multipolygon", MpgCS));
 
-            
+
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "generate polygon that contains a hole ", HolesCS));
 
 
-            App.HeaderControl.Add(new MenuContainerItem(MenuKey, SubMenuKey, Properties.Settings.Default.odormapSub));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
+
+            //App.HeaderControl.Add(new MenuContainerItem(MenuKey, SubMenuKey, Properties.Settings.Default.odormapSub));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
 
             base.Activate();
+        }
+
+        private void MpgCS(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            Polygon[] pg = new Polygon[50];
+            for (int i = 0; i < 50; i++)
+            {
+                Coordinate center = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+                Coordinate[] coord = new Coordinate[36];
+                for (int ii = 0; ii < 36; ii++)
+                {
+                    coord[ii] = new Coordinate(center.X + Math.Cos((ii * 10) * Math.PI / 10), center.Y + (ii * 10) * Math.PI / 10);
+                }
+                coord[35] = new Coordinate(coord[0].X, coord[0].Y);
+                pg[i] = new Polygon(coord);
+            }
+            MultiPolygon mpg = new MultiPolygon(pg);
+
+            FeatureSet fs = new FeatureSet(mpg.FeatureType);
+            fs.Features.Add(mpg);
+            fs.SaveAs("C:\\Temp\\mpg.shp", true);
+        }
+
+        private void MlsCS(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            MultiLineString Mls = new MultiLineString();
+            LineString[] ls = new LineString[40];
+            for (int ii = 0; ii < 40; ii++)
+            {
+                Coordinate[] coord = new Coordinate[36];
+                for (int i = 0; i < 36; i++)
+                {
+                    coord[i] = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+                }
+                ls[ii] = new LineString(coord);
+            }
+            Mls = new MultiLineString(ls);
+
+            FeatureSet fs = new FeatureSet(Mls.FeatureType);
+            fs.Features.Add(Mls);
+            fs.SaveAs("C:\\Temp\\Mls.shp", true);
+        }
+
+        private void HolesCS(object sender, EventArgs e)
+        {
+            //Defines a new coordinate array
+            Coordinate[] coords = new Coordinate[20];
+            //Defines a new random number generator
+            Random rnd = new Random();
+            //defines a randomly generated center for teh polygon
+            Coordinate center = new Coordinate((rnd.NextDouble() * 360) - 180, (rnd.NextDouble() * 180) - 90);
+            for (int i = 0; i < 19; i++)
+            {
+                //generates random coordinates and adds those coordinates to the array
+                coords[i] = new Coordinate(center.X + Math.Cos((i * 10) * Math.PI / 10), center.Y + (i * 10) * Math.PI / 10);
+            }
+            //sets the last coordinate equal to the first, this 'closes' the polygon
+            coords[19] = new Coordinate(coords[0].X, coords[0].Y);
+            //defines a new LingRing from the coordinates
+            LinearRing Ring = new LinearRing(coords);
+            //Repeates the process, but generates a LinearRing with a smaller area, this will be the hole in the polgyon
+            Coordinate[] coordshole = new Coordinate[20];
+            for (int i = 0; i < 20; i++)
+            {
+                coordshole[i] = new Coordinate(center.X + Math.Cos((i * 10) * Math.PI / 20), center.Y + (i * 10) * Math.PI / 20);
+            }
+            coordshole[19] = new Coordinate(coordshole[0].X, coordshole[0].Y);
+            LinearRing Hole = new LinearRing(coordshole);
+            //This steps addes the hole LinerRing to a ILinearRing Array
+            //A Polgyon can contain multiple holes, thus a Array of Hole is required
+            ILinearRing[] Holes = new ILinearRing[1];
+            Holes[0] = Hole;
+            //This passes the Ring, the polygon shell, and the Holes Array, the holes
+            Polygon pg = new Polygon(Ring, Holes);
+
+            //Feature f = new Feature();
+            FeatureSet fs = new FeatureSet(pg.FeatureType);
+            //f = new Feature(pg);
+            fs.Features.Add(pg);
+            fs.SaveAs("C:\\Temp\\hole.shp", true);
+
+        }
+
+        private void MpsCS(object sender, EventArgs e)
+        {
+            Feature f = new Feature();
+            FeatureSet fs = new FeatureSet(f.FeatureType);
+            Coordinate[] c = new Coordinate[36];
+            Random rnd = new Random();
+            for (int i = 0; i < 36; i++)
+            {
+                c[i] = new Coordinate((rnd.NextDouble() + 360) - 180, (rnd.NextDouble() * 180) - 90);
+            }
+            MultiPoint Mps = new MultiPoint(c);
+
+            f = new Feature(Mps);
+            fs.Features.Add(f);
+            fs.SaveAs("C:\\Temp\\mps.shp", true);
         }
 
         private void PolygonCS(object sender, EventArgs e)
@@ -105,7 +210,7 @@ namespace ResearchMap1.OdorMapExtension
 
         private void DrawLine2(object sender, EventArgs e)
         {
- 
+
 
         }
 
