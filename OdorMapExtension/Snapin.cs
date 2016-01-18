@@ -64,7 +64,7 @@ namespace ResearchMap1.OdorMapExtension
 
             fs.AddFeature(geom);
 
-
+            // add 16.01.18
 
             vertices.Clear();
             vertices.Add(new Coordinate(11219035 + 100, 1542354));
