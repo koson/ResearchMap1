@@ -31,10 +31,11 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "test convert coordinate", convertCoordinate));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Add Point", AddPoints));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Move Point", MovePoints));
-            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "creates a line feature", CreatesLineFeature));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "creates a line feature", CreatesLineFeature));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "get the value of a single cell in an attribute table", TableSingleCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "loop through a Feature Set's attribute table and get all the values", TableCS));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line", DrawLine));
 
             App.HeaderControl.Add(new MenuContainerItem(MenuKey, SubMenuKey, Properties.Settings.Default.odormapSub));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
@@ -42,6 +43,17 @@ namespace ResearchMap1.OdorMapExtension
             base.Activate();
         }
 
+        IFeatureSet _myLines = new FeatureSet(FeatureType.Line);
+        void DrawLine(double x1, double y1, double x2, double y2, int pixelWidth, Color color)
+        { 
+            // TODO write function draw line
+        
+        }
+
+        private void DrawLine(object sender, EventArgs e)
+        {
+        }
+ 
         private void CreateAttributes(object sender, EventArgs e)
         {
             //http://dotspatial.codeplex.com/wikipage?title=CreateAttributes&referringTitle=Desktop_SampleCode
@@ -56,7 +68,7 @@ namespace ResearchMap1.OdorMapExtension
             // create a geometry (square polygon)
             List<Coordinate> vertices = new List<Coordinate>();
 
-            vertices.Add(new Coordinate(11219035 , 1542354 ));
+            vertices.Add(new Coordinate(11219035, 1542354));
             vertices.Add(new Coordinate(11219035, 1542354 + 100));
             vertices.Add(new Coordinate(11219035 + 100, 1542354 + 100));
             vertices.Add(new Coordinate(11219035 + 100, 1542354 + 0));
@@ -210,9 +222,9 @@ namespace ResearchMap1.OdorMapExtension
             // Destination projection information.
             ProjectionInfo dest = DotSpatial.Projections.KnownCoordinateSystems.Geographic.World.WGS1984;
 
-//            Console.WriteLine("Coordinate (WGS1984) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
+            //            Console.WriteLine("Coordinate (WGS1984) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
             DotSpatial.Projections.Reproject.ReprojectPoints(xy, z, dest, source, 0, 1);
-//            Console.WriteLine("Coordinate (World.WebMercator) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
+            //            Console.WriteLine("Coordinate (World.WebMercator) = (" + xy[0].ToString() + ", " + xy[1].ToString() + ").");
         }
 
         private void MultilsFSCS(object sender, EventArgs e)
