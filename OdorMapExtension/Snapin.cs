@@ -18,7 +18,7 @@ namespace ResearchMap1.OdorMapExtension
         public override void Activate()
         {
             const string MenuKey = "kOdorMap";
-            const string SubMenuKey = "kOdorMapSub1";
+            //const string SubMenuKey = "kOdorMapSub1";
 
             App.HeaderControl.Add(new RootItem(MenuKey, Properties.Settings.Default.odormapMenu));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, Properties.Settings.Default.odormapSub1, method1));
