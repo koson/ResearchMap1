@@ -45,6 +45,7 @@ namespace ResearchMap1.OdorMapExtension
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multilinestring", MlsCS));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multipolygon", MpgCS));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create base grid", createBaseGrid));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Apply Color Scheme", btnApplyColorScheme_Click));
 
 
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "generate polygon that contains a hole ", HolesCS));
@@ -57,34 +58,74 @@ namespace ResearchMap1.OdorMapExtension
             base.Activate();
         }
 
+        private void btnApplyColorScheme_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            Shapefile sf = new Shapefile();
+            openFileDialog1.Filter = "Shapefiles|*.shp";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                sf = Shapefile.OpenFile(openFileDialog1.FileName, null);
+
+                //sf.OpenFile(openFileDialog1.FileName, null);
+                sf. Categories.Generate(6, tkClassificationType.ctJenksBreaks, 50);  // first parameter is field index, third - number of categories
+                //sf.Categories.ApplyExpressions();
+
+                ColorScheme scheme = new ColorScheme();
+                scheme. .AddBreak(0.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Violet)));
+                scheme.AddBreak(1.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.DodgerBlue)));
+                scheme.AddBreak(2.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.LightBlue)));
+                scheme.AddBreak(3.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.LightGreen)));
+                scheme.AddBreak(4.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Yellow)));
+                scheme.AddBreak(5.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Orange)));
+                scheme.AddBreak(6.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Red)));
+
+                //sf.Categories.ApplyColorScheme(tkColorSchemeType.ctSchemeGraduated, scheme);
+
+                App.Map.AddLayer(sf.Filename);
+                App.Map.Refresh();
+                //axMap1.AddLayer(sf, true);
+                //axMap1.Redraw();
+            }
+        }
+
         private void createBaseGrid(object sender, EventArgs e)
         {
             // TODO: make a loop for draw grid   
             List<Polygon> pg = new List<Polygon>();
             Coordinate[] coord = new Coordinate[4];
-            coord[0] = new Coordinate(11219035, 1542354);
-            coord[1] = new Coordinate(11219035, 1542354 + 100);
-            coord[2] = new Coordinate(11219035 + 100, 1542354 + 100);
-            coord[3] = new Coordinate(11219035 + 100, 1542354 + 0);
-            pg.Add( new Polygon(coord));
+            double startx = 11219035;
+            double starty = 1542354;
 
-            coord[0] = new Coordinate(11219035+100, 1542354);
-            coord[1] = new Coordinate(11219035 + 100, 1542354 + 100);
-            coord[2] = new Coordinate(11219035 + 100 + 100, 1542354 + 100);
-            coord[3] = new Coordinate(11219035 + 100 + 100, 1542354 + 0);
+            coord[0] = new Coordinate(startx, starty);
+            coord[1] = new Coordinate(startx, starty + 100);
+            coord[2] = new Coordinate(startx + 100, starty + 100);
+            coord[3] = new Coordinate(startx + 100, starty + 0);
+            pg.Add(new Polygon(coord));
+
+
+
+            coord[0] = new Coordinate(startx + 100, starty);
+            coord[1] = new Coordinate(startx + 100, starty + 100);
+            coord[2] = new Coordinate(startx + 100 + 100, starty + 100);
+            coord[3] = new Coordinate(startx + 100 + 100, starty + 0);
             pg.Add(new Polygon(coord));
 
             MultiPolygon mpg = new MultiPolygon(pg.ToArray());
             FeatureSet fs = new FeatureSet(mpg.FeatureType);
-            fs.Features.Add(mpg);
+            //fs.Symbolizer = new DotSpatial.Symbology.PolygonSymbolizer(Color.Blue, Color.Red);
+            //fs.Features.Add(mpg);
+
             // Add a layer to the map, and we know it is a point layer so cast it specifically.
             IMapPolygonLayer polygonLayer = App.Map.Layers.Add(fs) as IMapPolygonLayer;
+
 
             // Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
             if (polygonLayer != null)
             {
                 polygonLayer.LegendText = "grid point";
-                //polygonLayer.Symbolizer = new PointSymbolizer(Color.Blue, DotSpatial.Symbology.Po intShape.Ellipse, 7);
+                //polygonLayer.Symbolizer = new PointSymbolizer(Color.Blue, DotSpatial. );
             }
         }
 
