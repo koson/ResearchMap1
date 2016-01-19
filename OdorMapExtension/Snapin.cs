@@ -61,33 +61,16 @@ namespace ResearchMap1.OdorMapExtension
         private void btnApplyColorScheme_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
             Shapefile sf = new Shapefile();
             openFileDialog1.Filter = "Shapefiles|*.shp";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 sf = Shapefile.OpenFile(openFileDialog1.FileName, null);
 
-                //sf.OpenFile(openFileDialog1.FileName, null);
-                sf. Categories.Generate(6, tkClassificationType.ctJenksBreaks, 50);  // first parameter is field index, third - number of categories
-                //sf.Categories.ApplyExpressions();
-
-                ColorScheme scheme = new ColorScheme();
-                scheme. .AddBreak(0.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Violet)));
-                scheme.AddBreak(1.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.DodgerBlue)));
-                scheme.AddBreak(2.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.LightBlue)));
-                scheme.AddBreak(3.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.LightGreen)));
-                scheme.AddBreak(4.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Yellow)));
-                scheme.AddBreak(5.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Orange)));
-                scheme.AddBreak(6.0 / 6.0, Convert.ToUInt32(ColorTranslator.ToOle(Color.Red)));
-
-                //sf.Categories.ApplyColorScheme(tkColorSchemeType.ctSchemeGraduated, scheme);
-
+ 
                 App.Map.AddLayer(sf.Filename);
                 App.Map.Refresh();
-                //axMap1.AddLayer(sf, true);
-                //axMap1.Redraw();
-            }
+             }
         }
 
         private void createBaseGrid(object sender, EventArgs e)
