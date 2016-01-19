@@ -22,6 +22,7 @@ namespace ResearchMap1.OdorMapExtension
             //const string SubMenuKey = "kOdorMapSub1";
 
             App.HeaderControl.Add(new RootItem(MenuKey, Properties.Settings.Default.odormapMenu));
+            #region comment
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, Properties.Settings.Default.odormapSub1, method1));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Reproject a Shapefile", ReprojectShapefile));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Adding a Geographic Coordinate System to a Feature Set", AddingGeographicCoordinateSystemToFeatureSet));
@@ -42,18 +43,18 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "calculating the length of line string", linestringCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create new polygon and calculating the area", PolygonCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create multi points", MpsCS));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multilinestring", MlsCS));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multipolygon", MpgCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multilinestring", MlsCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "create a multipolygon", MpgCS));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "generate polygon that contains a hole ", HolesCS));
+            //App.HeaderControl.Add(new MenuContainerItem(MenuKey, SubMenuKey, Properties.Settings.Default.odormapSub));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
+
+            #endregion
+
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create base grid", createBaseGrid));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Apply Color Scheme", btnApplyColorScheme_Click));
 
 
-            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "generate polygon that contains a hole ", HolesCS));
-
-
-
-            //App.HeaderControl.Add(new MenuContainerItem(MenuKey, SubMenuKey, Properties.Settings.Default.odormapSub));
-            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
 
             base.Activate();
         }
@@ -63,14 +64,17 @@ namespace ResearchMap1.OdorMapExtension
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             Shapefile sf = new Shapefile();
             openFileDialog1.Filter = "Shapefiles|*.shp";
+
+
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 sf = Shapefile.OpenFile(openFileDialog1.FileName, null);
 
- 
+
                 App.Map.AddLayer(sf.Filename);
                 App.Map.Refresh();
-             }
+            }
         }
 
         private void createBaseGrid(object sender, EventArgs e)
@@ -78,27 +82,27 @@ namespace ResearchMap1.OdorMapExtension
             // TODO: make a loop for draw grid   
             List<Polygon> pg = new List<Polygon>();
             Coordinate[] coord = new Coordinate[4];
-            double startx = 11219035;
-            double starty = 1542354;
+            double startx = 11256300;
+            double starty = 1418700;
+            const int width = 200;
 
-            coord[0] = new Coordinate(startx, starty);
-            coord[1] = new Coordinate(startx, starty + 100);
-            coord[2] = new Coordinate(startx + 100, starty + 100);
-            coord[3] = new Coordinate(startx + 100, starty + 0);
-            pg.Add(new Polygon(coord));
-
-
-
-            coord[0] = new Coordinate(startx + 100, starty);
-            coord[1] = new Coordinate(startx + 100, starty + 100);
-            coord[2] = new Coordinate(startx + 100 + 100, starty + 100);
-            coord[3] = new Coordinate(startx + 100 + 100, starty + 0);
-            pg.Add(new Polygon(coord));
-
+            for (int i = 0; i < 50; i++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    coord[0] = new Coordinate((i * width) + startx, (j * width) + starty);
+                    coord[1] = new Coordinate((i * width) + startx, (j * width) + starty + width);
+                    coord[2] = new Coordinate((i * width) + startx + width, (j * width) + starty + width);
+                    coord[3] = new Coordinate((i * width) + startx + width, (j * width) + starty + 0);
+                    pg.Add(new Polygon(coord));
+                     
+                }
+            }
+ 
             MultiPolygon mpg = new MultiPolygon(pg.ToArray());
             FeatureSet fs = new FeatureSet(mpg.FeatureType);
             //fs.Symbolizer = new DotSpatial.Symbology.PolygonSymbolizer(Color.Blue, Color.Red);
-            //fs.Features.Add(mpg);
+            fs.Features.Add(mpg);
 
             // Add a layer to the map, and we know it is a point layer so cast it specifically.
             IMapPolygonLayer polygonLayer = App.Map.Layers.Add(fs) as IMapPolygonLayer;
