@@ -16,6 +16,8 @@ namespace ResearchMap1.OdorMapExtension
     class Snapin : Extension
     {
         IFeatureSet _myPoints = new FeatureSet(FeatureType.Point);
+        IFeatureSet _myLines = new FeatureSet(FeatureType.Line);
+        //IFeatureSet _myLines = new FeatureSet(FeatureType.Line);
         public override void Activate()
         {
             const string MenuKey = "kOdorMap";
@@ -49,14 +51,87 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
 
             #endregion
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
 
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create base grid", createBaseGrid));
-            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Apply Color Scheme", btnApplyColorScheme_Click));
+            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Apply Color Scheme", btnApplyColorScheme_Click));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Add Line", AddLine));
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Move Line", MoveLine));
+
 
 
 
             base.Activate();
+        }
+
+        private void MoveLine(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+
+
+            foreach (IFeature feature in _myLines.Features)
+            {
+                // Coordinates can be updated geographically like
+                // feature.Coordinates[0].X += (rnd.NextDouble() - .5);
+                // feature.Coordinates[0].Y += (rnd.NextDouble() - .5);
+
+                //for (int i = 0; i < 10; i++)
+                //{
+                    // Or controled in pixels with the help of the map
+                    System.Drawing.Point pixelLocation =App.Map.ProjToPixel(feature.Coordinates[0]);
+
+                    // Control movement in terms of pixels
+                    int dx = Convert.ToInt32((rnd.NextDouble() - .5) * 50); // shift left or right 5 pixels
+                    int dy = Convert.ToInt32((rnd.NextDouble() - .5) * 50); // shift up or down 5 pixels
+                    pixelLocation.X = pixelLocation.X + dx;
+                    pixelLocation.Y = pixelLocation.Y + dy;
+
+                    // Convert the pixel motions back to geographic motions.
+                    //feature.Coordinates[i] = App.Map.PixelToProj(pixelLocation);
+                    feature.Coordinates[0] = App.Map.PixelToProj(pixelLocation);
+                //}
+            }
+
+            // Refresh the cached representation because we moved points around.
+            App.Map.MapFrame.Invalidate();
+            App.Map.Invalidate();
+        }
+
+        private void AddLine(object sender, EventArgs e)
+        {
+            // Create the featureset if one hasn't been created yet.
+            if (_myLines == null) _myLines= new FeatureSet(FeatureType.Line);
+            _myLines.Projection = App.Map.Projection;
+
+            // Assume background layers have been added, and get the current map extents.
+
+            double xmin = App.Map.ViewExtents.MinX;
+            double xmax = App.Map.ViewExtents.MaxX;
+            double ymin = App.Map.ViewExtents.MinY;
+            double ymax = App.Map.ViewExtents.MaxY;
+
+            // Randomly generate 10 points that are in the map extent
+            Coordinate[] coords = new Coordinate[10];
+            Random rnd = new Random();
+            for (int i = 0; i < 10; i++)
+            {
+                double x = xmin + rnd.NextDouble() * (xmax - xmin);
+                double y = ymin + rnd.NextDouble() * (ymax - ymin);
+                coords[i] = new Coordinate(x, y);
+
+            }
+
+            _myLines.Features.Add(new LineString(coords));
+
+            // Add a layer to the map, and we know it is a point layer so cast it specifically.
+            IMapLineLayer LineLayer = App.Map.Layers.Add(_myLines) as IMapLineLayer;
+
+            // Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
+            if (LineLayer != null)
+            {
+                LineLayer.LegendText = "MovingLines";
+                LineLayer.Symbolizer = new LineSymbolizer(Color.Blue, 3);
+            }
         }
 
         private void btnApplyColorScheme_Click(object sender, EventArgs e)
@@ -340,7 +415,6 @@ namespace ResearchMap1.OdorMapExtension
 
         }
 
-        IFeatureSet _myLines = new FeatureSet(FeatureType.Line);
         void DrawLine(double x1, double y1, double x2, double y2, int pixelWidth, Color color)
         {
             // TODO write function draw line
