@@ -36,7 +36,6 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "creates a line feature", CreatesLineFeature));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "get the value of a single cell in an attribute table", TableSingleCS));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "loop through a Feature Set's attribute table and get all the values", TableCS));
-            //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line", DrawLine));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Draw Line 2", DrawLine2));
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Coord Click", btnCoord_Click));
@@ -50,6 +49,7 @@ namespace ResearchMap1.OdorMapExtension
             //App.HeaderControl.Add(new SimpleActionItem(MenuKey, SubMenuKey, "odor map 3", OnMenuClickEventHandler));
 
             #endregion
+            App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create Attributes", CreateAttributes));
 
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Create base grid", createBaseGrid));
             App.HeaderControl.Add(new SimpleActionItem(MenuKey, "Apply Color Scheme", btnApplyColorScheme_Click));
@@ -80,11 +80,21 @@ namespace ResearchMap1.OdorMapExtension
         private void createBaseGrid(object sender, EventArgs e)
         {
             // TODO: make a loop for draw grid   
-            List<Polygon> pg = new List<Polygon>();
+            //List<Polygon> pg = new List<Polygon>();
+            //Polygon pg = new Polygon();
+
             Coordinate[] coord = new Coordinate[4];
             double startx = 11256300;
             double starty = 1418700;
             const int width = 200;
+
+            FeatureSet fs = new FeatureSet();
+            IFeature feature;
+            // Add Some Columns
+            fs.DataTable.Columns.Add(new DataColumn("ID", typeof(int)));
+            fs.DataTable.Columns.Add(new DataColumn("Text", typeof(string)));
+            fs.DataTable.Columns.Add(new DataColumn("Value", typeof(double)));
+            Random rnd = new Random();
 
             for (int i = 0; i < 50; i++)
             {
@@ -94,15 +104,31 @@ namespace ResearchMap1.OdorMapExtension
                     coord[1] = new Coordinate((i * width) + startx, (j * width) + starty + width);
                     coord[2] = new Coordinate((i * width) + startx + width, (j * width) + starty + width);
                     coord[3] = new Coordinate((i * width) + startx + width, (j * width) + starty + 0);
-                    pg.Add(new Polygon(coord));
-                     
+                    Polygon pg = new Polygon(coord);
+                    feature = fs.AddFeature(pg);
+                    feature.DataRow.BeginEdit();
+                    feature.DataRow["ID"] = j + i * 50;
+                    feature.DataRow["Text"] = "Hello World" + (j + i * 50).ToString();
+                    feature.DataRow["Value"] = (rnd.NextDouble() * 360) ;
+
+                    feature.DataRow.EndEdit();
+                    //fs.Features.Add(pg);
                 }
             }
- 
-            MultiPolygon mpg = new MultiPolygon(pg.ToArray());
-            FeatureSet fs = new FeatureSet(mpg.FeatureType);
+
+            //MultiPolygon mpg = new MultiPolygon(pg.ToArray());
+            //FeatureSet fs = new FeatureSet(mpg.FeatureType);
+
+
+
+            //feature = fs.AddFeature(pg[1]);
+            //feature.DataRow.BeginEdit();
+            //feature.DataRow["ID"] = 2;
+            //feature.DataRow["Text"] = "Hello Thailand";
+            //feature.DataRow.EndEdit();
+
             //fs.Symbolizer = new DotSpatial.Symbology.PolygonSymbolizer(Color.Blue, Color.Red);
-            fs.Features.Add(mpg);
+
 
             // Add a layer to the map, and we know it is a point layer so cast it specifically.
             IMapPolygonLayer polygonLayer = App.Map.Layers.Add(fs) as IMapPolygonLayer;
@@ -429,15 +455,6 @@ namespace ResearchMap1.OdorMapExtension
             fs.AddFeature(geom);
 
             // add 16.01.18
-
-            vertices.Clear();
-            vertices.Add(new Coordinate(11219035 + 100, 1542354));
-            vertices.Add(new Coordinate(11219035 + 100, 1542354 + 100));
-            vertices.Add(new Coordinate(11219035 + 200, 1542354 + 100));
-            vertices.Add(new Coordinate(11219035 + 200, 1542354 + 0));
-            geom = new Polygon(vertices);
-
-
             // add the geometry to the featureset. 
             IFeature feature = fs.AddFeature(geom);
 
@@ -448,6 +465,23 @@ namespace ResearchMap1.OdorMapExtension
             feature.DataRow["ID"] = 1;
             feature.DataRow["Text"] = "Hello World";
             feature.DataRow.EndEdit();
+
+
+            vertices.Clear();
+            vertices.Add(new Coordinate(11219035 + 100, 1542354));
+            vertices.Add(new Coordinate(11219035 + 100, 1542354 + 100));
+            vertices.Add(new Coordinate(11219035 + 200, 1542354 + 100));
+            vertices.Add(new Coordinate(11219035 + 200, 1542354 + 0));
+            geom = new Polygon(vertices);
+
+            feature = fs.AddFeature(geom);
+            // now the resulting features knows what columns it has
+            // add values for the columns
+            feature.DataRow.BeginEdit();
+            feature.DataRow["ID"] = 2;
+            feature.DataRow["Text"] = "Hello World";
+            feature.DataRow.EndEdit();
+
 
 
             // save the feature set
