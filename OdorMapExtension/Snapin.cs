@@ -79,10 +79,6 @@ namespace ResearchMap1.OdorMapExtension
 
         private void createBaseGrid(object sender, EventArgs e)
         {
-            // TODO: make a loop for draw grid   
-            //List<Polygon> pg = new List<Polygon>();
-            //Polygon pg = new Polygon();
-
             Coordinate[] coord = new Coordinate[4];
             double startx = 11256300;
             double starty = 1418700;
@@ -94,8 +90,8 @@ namespace ResearchMap1.OdorMapExtension
             fs.DataTable.Columns.Add(new DataColumn("ID", typeof(int)));
             fs.DataTable.Columns.Add(new DataColumn("Text", typeof(string)));
             fs.DataTable.Columns.Add(new DataColumn("Value", typeof(double)));
-            Random rnd = new Random();
 
+            Random rnd = new Random();
             for (int i = 0; i < 50; i++)
             {
                 for (int j = 0; j < 50; j++)
@@ -110,30 +106,11 @@ namespace ResearchMap1.OdorMapExtension
                     feature.DataRow["ID"] = j + i * 50;
                     feature.DataRow["Text"] = "Hello World" + (j + i * 50).ToString();
                     feature.DataRow["Value"] = (rnd.NextDouble() * 360) ;
-
                     feature.DataRow.EndEdit();
-                    //fs.Features.Add(pg);
                 }
             }
-
-            //MultiPolygon mpg = new MultiPolygon(pg.ToArray());
-            //FeatureSet fs = new FeatureSet(mpg.FeatureType);
-
-
-
-            //feature = fs.AddFeature(pg[1]);
-            //feature.DataRow.BeginEdit();
-            //feature.DataRow["ID"] = 2;
-            //feature.DataRow["Text"] = "Hello Thailand";
-            //feature.DataRow.EndEdit();
-
-            //fs.Symbolizer = new DotSpatial.Symbology.PolygonSymbolizer(Color.Blue, Color.Red);
-
-
             // Add a layer to the map, and we know it is a point layer so cast it specifically.
             IMapPolygonLayer polygonLayer = App.Map.Layers.Add(fs) as IMapPolygonLayer;
-
-
             // Control what the points look like through a symbolizer (or pointLayer.Symbology for categories)
             if (polygonLayer != null)
             {
@@ -642,35 +619,7 @@ namespace ResearchMap1.OdorMapExtension
 
         private void method1(object sender, EventArgs e)
         {
-            //MessageBox.Show("Hello???", "Method 1");
-            //// interleaved x and y values, so like x1, y1, x2, y2 etc.
-            //double[] xy = new double[] { 11219088, 1542359 };
-            //// z values if any.  Typically this is just 0.
-            //double[] z = new double[] { 0 };
-            //// Source projection information.
-            //ProjectionInfo source = DotSpatial.Projections.KnownCoordinateSystems.Projected.UtmWgs1984.WGS1984UTMZone47N;
-            //// Destination projection information.
-            //ProjectionInfo dest = DotSpatial.Projections.KnownCoordinateSystems.Geographic.World.WGS1984;
-            //// Call the projection utility.
-            //DotSpatial.Projections.Reproject.ReprojectPoints(xy, z, source, dest, 0, 1);
-
-
-            //ProjectionInfo pStart = DotSpatial.Projections.KnownCoordinateSystems.Projected.UtmWgs1984.WGS1984UTMZone47N;
-            //ProjectionInfo pEnd = DotSpatial.Projections.KnownCoordinateSystems.Geographic.World.WGS1984;
-
-
-            //double lat = 8.654;
-            //double lon = 38.123;
-
-            //double[] xy = new double[2] { lat, lon };
-            //double[] z = new double[1] { 1234.5 };
-
-            //Reproject.ReprojectPoints(xy, z, pStart, pEnd, 0, 1);
-
-            //Console.WriteLine(String.Format("New Lat/Lon = {0}/{1}", xy[0], xy[1]));
-
             var coor = App.Map.PixelToProj(new System.Drawing.Point(11219088, 1542359));
-
         }
     }
 }
