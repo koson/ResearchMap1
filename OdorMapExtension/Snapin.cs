@@ -155,9 +155,9 @@ namespace ResearchMap1.OdorMapExtension
         private void createBaseGrid(object sender, EventArgs e)
         {
             Coordinate[] coord = new Coordinate[4];
-            double startx = 11256300;
-            double starty = 1418700;
-            const int width = 200;
+            double startx = 11252200;
+            double starty = 1418500;
+            const int width = 100;
 
             FeatureSet fs = new FeatureSet();
             IFeature feature;
@@ -167,9 +167,9 @@ namespace ResearchMap1.OdorMapExtension
             fs.DataTable.Columns.Add(new DataColumn("Value", typeof(double)));
 
             Random rnd = new Random();
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 110; i++)
             {
-                for (int j = 0; j < 50; j++)
+                for (int j = 0; j < 110; j++)
                 {
                     coord[0] = new Coordinate((i * width) + startx, (j * width) + starty);
                     coord[1] = new Coordinate((i * width) + startx, (j * width) + starty + width);
